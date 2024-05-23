@@ -1,15 +1,17 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+
+	"github.com/good-binary/utility/random"
+)
 
 func main() {
-	a := 5
 
-	fmt.Printf("Value of a: %d\n", a)
-	fmt.Printf("Memory location of a: %v\n", &a)
-
-	b := &a
-	fmt.Printf("Value of b: %v\n", b)
-	fmt.Printf("Memory location of b: %v\n", &b)
-	fmt.Printf("Value of a: %v\n", *b)
+	for i := 0; i < 10; i++ {
+		name := random.RandomFullName()
+		fmt.Println(name)
+		time.Sleep(time.Second)
+	}
 }
