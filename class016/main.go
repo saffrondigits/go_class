@@ -24,7 +24,7 @@ func main() {
 		panic(err)
 	}
 
-	defer file.Chdir()
+	defer file.Close()
 
 	csvReader := csv.NewReader(file)
 	count := 0
