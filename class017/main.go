@@ -72,3 +72,6 @@ func main() {
 	fmt.Printf("totalOutgoing: %v\n", totalOutgoing)
 
 }
+
+// Take name of the person to query the call time from std IO
+// If the name isn't available in the list, print 404
