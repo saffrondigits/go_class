@@ -80,12 +80,102 @@ func GetItem(c *gin.Context) {
 
 func CreateItem(c *gin.Context) {
 	fmt.Println("Create item API is being called!")
+	var newItem Item
+
+	err := c.ShouldBindJSON(&newItem)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "seems data you are sending is incorrect",
+		})
+
+		return
+	}
+
+	if newItem.Name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "seems data you are sending is incorrect",
+		})
+
+		return
+	}
+
+	for _, v := range items {
+		if v.Name == newItem.Name {
+			c.JSON(http.StatusConflict, gin.H{
+				"message": "the item already exists",
+			})
+			return
+		}
+	}
+
+	newItem.Id = int64(len(items) + 1)
+
+	items = append(items, newItem)
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "the item has been added successfully",
+	})
 }
 
 func UpdateItem(c *gin.Context) {
 	fmt.Println("Create item API is being called!")
+
+	id := c.Param("id")
+	intId, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "seems you have given an incorrect id",
+		})
+
+		return
+	}
+
+	var newItem Item
+	err = c.ShouldBindJSON(&newItem)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "incorrect json request",
+		})
+		return
+	}
+
+	for i, item := range items {
+		if item.Id == int64(intId) {
+			items[i].Name = newItem.Name
+			c.JSON(http.StatusOK, gin.H{
+				"message": "the item has been updated successfully",
+			})
+			return
+		}
+	}
+
+	c.JSON(http.StatusNotFound, gin.H{
+		"message": "the item does not exist",
+	})
 }
 
 func DeleteItem(c *gin.Context) {
 	fmt.Println("Delete item API is being called!")
+	id := c.Param("id")
+	intId, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "seems you have given an incorrect id",
+		})
+
+		return
+	}
+
+	for i, item := range items {
+		if item.Id == int64(intId) {
+			items = append(items[:i], items[i+1:]...)
+			c.JSON(http.StatusOK, gin.H{
+				"message": "the item has been deleted successfully",
+			})
+			return
+		}
+	}
+
+	c.JSON(http.StatusNotFound, gin.H{
+		"message": "doesn't exist",
+	})
 }
